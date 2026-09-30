@@ -79,7 +79,7 @@ body{background:linear-gradient(180deg,#dff3ff,#f7fbff);color:#102a43;transition
   </div>
 </header>
 
-<div class="ginti-box" id="ginti">👥 गिनती लोड हो रही है...</div>
+<div class="ginti-box" id="ginti">👥 कुल यूजर लोड हो रहा है...</div>
 
 <div id="loading" class="loading">मौसम की जानकारी लोड हो रही है...</div>
 <main id="content" class="hidden">
@@ -134,23 +134,30 @@ let currentCity = "Behat";
 let unit = localStorage.getItem("unit") || "C";
 let lastWeather = null;
 
-// --- तेरी गिनती वाला सिस्टम (असली लोग) ---
+// ===== असली गिनती वाला सिस्टम (Abacus - रियल) =====
 async function gintiSystem(){
   const box=document.getElementById("ginti");
-  const ns="mera-mausam-behat-final-2026";
-  const key="total-users";
+  const NAMESPACE = "mera-mausam-behat-asli-2026";
+  const KEY = "total-users";
   try{
+    let url;
     if(localStorage.getItem("mera_mausam_counted")){
-      let r=await fetch(`https://api.countapi.xyz/get/${ns}/${key}`);
-      let d=await r.json();
-      box.innerText=`👥 कुल यूजर: ${d.value} लोग`;
-    }else{
-      let r=await fetch(`https://api.countapi.xyz/hit/${ns}/${key}`);
-      let d=await r.json();
-      localStorage.setItem("mera_mausam_counted","yes");
-      box.innerText=`👥 कुल यूजर: ${d.value} लोग`;
+      url = `https://abacus.jasoncameron.dev/get/${NAMESPACE}/${KEY}`;
+    } else {
+      url = `https://abacus.jasoncameron.dev/hit/${NAMESPACE}/${KEY}`;
     }
-  }catch(e){ box.innerText=`👥 कुल यूजर: गिनती चालू है`; }
+    let r = await fetch(url);
+    let d = await r.json();
+    if(d.value!== undefined){
+      localStorage.setItem("mera_mausam_counted","yes");
+      box.innerText = `👥 कुल यूजर: ${d.value} लोग`;
+    } else {
+      throw new Error("no value");
+    }
+  }catch(e){
+    // फेल होने पर दोबारा कोशिश
+    setTimeout(gintiSystem, 2000);
+  }
 }
 gintiSystem();
 
