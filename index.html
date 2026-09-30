@@ -1,4 +1,3 @@
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>मेरा मौसम</title>
@@ -20,6 +19,7 @@ body{background:linear-gradient(180deg,#dff3ff,#f7fbff);color:#102a43;transition
 .condition{font-size:20px;font-weight:bold}
 .minmax{margin-top:7px;font-size:15px}
 .tiptop{display:inline-block;margin-top:14px;padding:9px 17px;border-radius:30px;background:#ffffff30;border:1px solid #ffffff70}
+.ginti-box{background:linear-gradient(135deg,#00c853,#009624);color:white;border-radius:17px;padding:14px;text-align:center;margin:12px 15px;font-weight:bold;font-size:17px;box-shadow:0 4px 12px #00c85350}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:15px}
 .card{background:#f3f9ff;border-radius:17px;padding:14px 5px;text-align:center;box-shadow:0 3px 12px #00000010}
 .card.icon{font-size:27px}
@@ -78,6 +78,9 @@ body{background:linear-gradient(180deg,#dff3ff,#f7fbff);color:#102a43;transition
     <div class="tiptop" id="topTip">मौसम की जानकारी</div>
   </div>
 </header>
+
+<div class="ginti-box" id="ginti">👥 गिनती लोड हो रही है...</div>
+
 <div id="loading" class="loading">मौसम की जानकारी लोड हो रही है...</div>
 <main id="content" class="hidden">
 <div class="cards">
@@ -131,7 +134,26 @@ let currentCity = "Behat";
 let unit = localStorage.getItem("unit") || "C";
 let lastWeather = null;
 
-// GOOGLE JAISA NIGHT FIX
+// --- तेरी गिनती वाला सिस्टम (असली लोग) ---
+async function gintiSystem(){
+  const box=document.getElementById("ginti");
+  const ns="mera-mausam-behat-final-2026";
+  const key="total-users";
+  try{
+    if(localStorage.getItem("mera_mausam_counted")){
+      let r=await fetch(`https://api.countapi.xyz/get/${ns}/${key}`);
+      let d=await r.json();
+      box.innerText=`👥 कुल यूजर: ${d.value} लोग`;
+    }else{
+      let r=await fetch(`https://api.countapi.xyz/hit/${ns}/${key}`);
+      let d=await r.json();
+      localStorage.setItem("mera_mausam_counted","yes");
+      box.innerText=`👥 कुल यूजर: ${d.value} लोग`;
+    }
+  }catch(e){ box.innerText=`👥 कुल यूजर: गिनती चालू है`; }
+}
+gintiSystem();
+
 function weatherInfo(code,isNight){
   if(code===0) return isNight?["🌙","साफ रात"]:["☀️","साफ आसमान"];
   if(code===1) return isNight?["🌙","मुख्यतः साफ रात"]:["🌤️","मुख्यतः साफ"];
