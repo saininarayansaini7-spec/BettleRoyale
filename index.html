@@ -1,23 +1,4 @@
-async function gintiSystem(){
-  const box=document.getElementById("ginti");
-  const ns="mera-mausam-behat-final-2026";
-  const key="total-users";
-  try{
-    if(localStorage.getItem("counted")){
-      let r=await fetch(`https://api.countapi.xyz/get/${ns}/${key}`);
-      let d=await r.json();
-      box.innerText=`👥 कुल यूजर: ${d.value} लोग`;
-    }else{
-      let r=await fetch(`https://api.countapi.xyz/hit/${ns}/${key}`);
-      let d=await r.json();
-      localStorage.setItem("counted","yes");
-      box.innerText=`👥 कुल यूजर: ${d.value} लोग`;
-    }
-  }catch(e){ box.innerText="👥 कुल यूजर: 1 लोग"; }
-}
-gintiSystem();<!DOCTYPE html>
-<html lang="hi">
-<head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>मेरा मौसम</title>
